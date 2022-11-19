@@ -1,0 +1,7 @@
+data/user.class
+data/image.class
+Database/Loginquery.class
+com/mycompany/serviciorest/JAXRSConfiguration.class
+com/mycompany/serviciorest/resources/JavaEE8Resource.class
+data/CjtImages.class
+Database/Imagequery.class

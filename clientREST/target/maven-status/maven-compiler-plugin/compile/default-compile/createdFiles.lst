@@ -1,0 +1,15 @@
+logout.class
+data/user.class
+list.class
+Database/Loginquery.class
+com/mycompany/clientrest/JAXRSConfiguration.class
+registrarImagen.class
+register.class
+eliminarImagen.class
+data/image.class
+login.class
+buscarImagen.class
+modificarImagen.class
+com/mycompany/clientrest/resources/JavaEE8Resource.class
+data/CjtImages.class
+Database/Imagequery.class
