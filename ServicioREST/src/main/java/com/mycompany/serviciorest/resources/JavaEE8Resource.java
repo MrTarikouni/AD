@@ -226,19 +226,22 @@ public Response deleteImage (@FormParam("id") String id,
 @Produces(MediaType.APPLICATION_JSON)
 public Response getImageFromID (@PathParam("id") int id) {
 
-    image i = Imagequery.getImagefromID(Integer.valueOf(id));
+    image i = Imagequery.getImagefromID(id);
+    String failed = "-1";
+     if (i == null)
+        return Response.ok(failed, MediaType.APPLICATION_JSON).build();
+     
+     if (i.getCreator() == null)
+        return Response.ok(failed, MediaType.APPLICATION_JSON).build();
     
-    
+    if (i.getCreator().length() < 1)
+        return Response.ok(failed, MediaType.APPLICATION_JSON).build();
+     
     Gson gson = new Gson();
     String imageJS = gson.toJson(i);
     
-    if (i.getCreator().length() != 0) {
-        return Response.ok(200, MediaType.APPLICATION_JSON).entity(imageJS).build();
-    }
-    
-    else {
-        return Response.ok(-1, MediaType.APPLICATION_JSON).build();
-    }
+     return Response.ok(200, MediaType.APPLICATION_JSON).entity(imageJS).build();
+
 }
 
 /**

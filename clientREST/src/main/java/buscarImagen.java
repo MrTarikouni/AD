@@ -51,14 +51,13 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
         response.sendRedirect("login.jsp");
         }
     
-    image i = new image();
     CjtImages cjt = new CjtImages();
     
     
-    if (request.getParameter("title").length() != 0 && request.getParameter("author").length() == 0){
+    if (request.getParameter("title").length() != 0 && request.getParameter("author").length() != 0){
         URL url = new URL("http://localhost:8080/ServicioREST/resources/javaee8/multipleSearch/"+request.getParameter("title")+"/" + request.getParameter("author"));
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("POST");
+        conn.setRequestMethod("GET");
         conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         conn.setDoOutput(true);               
 
@@ -77,7 +76,7 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
     else if (request.getParameter("id").length() != 0) {
         URL url = new URL("http://localhost:8080/ServicioREST/resources/javaee8/searchID/"+request.getParameter("id"));
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("POST");
+        conn.setRequestMethod("GET");
         conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         conn.setDoOutput(true);               
 
@@ -93,7 +92,7 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
     }
     
     else if (request.getParameter("title").length() != 0) {
-        URL url = new URL("http://localhost:8080/ServicioREST/resources/javaee8/searchTitle?title="+request.getParameter("title"));
+        URL url = new URL("http://localhost:8080/ServicioREST/resources/javaee8/searchTitle/"+request.getParameter("title"));
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -168,16 +167,16 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
         try (PrintWriter out = response.getWriter()) {
             out.println("   <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css\" rel=\"stylesheet\" integrity=\"sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi\" crossorigin=\"anonymous\">\n" +
 "");
-            out.println("<br><h1 class = \"fw-bold\" style = \"text-align: center;\">Lista de imágenes registradas en el sistema</h1><br>");
+            out.println("<br><h1 class = \"fw-bold\" style = \"text-align: center;\">Resultado de la búsqueda</h1><br>");
             for (Map.Entry<Integer,image> set : cjt.getImages().entrySet()){
-                i = set.getValue();
+                image i = set.getValue();
                 ++counter;
                 dir = "files/"+i.getFilename();
                 
                 int id = i.getId();
                 
                 out.println("<div style = \"text-align: center;\">");
-                out.println("<img src="+ dir +" width= \"400px\" height= \"auto\" style = \"border: 5px solid;\"  /><br>");
+                //out.println("<img src="+ dir +" width= \"400px\" height= \"auto\" style = \"border: 5px solid;\"  /><br>");
                 out.println("<br><strong>Titulo</strong> = " + i.getTitle());
                 out.println("<br><strong>Descripción</strong> = " + i.getDescription());
                 out.println("<br><strong>Palabras clave</strong> = " + i.getKeywords());
@@ -198,13 +197,15 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
                 out.println("</div><hr>");
         }
             if (counter == 0){
-                out.println("<br><h3 class = \"fw-bold\">No hay ninguna imagen registrada en el sistema</h3>");
+                out.println("<br><h3 class = \"fw-bold\">Ninguna imagen coindice con los criterios de busqueda</h3>");
                 out.println("<br><a href=\"menu.jsp\" class = \"btn btn-primary\">Volver al menú </a> o <a href=\"registrarImagen.jsp\" class = \"btn btn-primary\" > Introducir nueva imagen.</a>");
             }
         }
         catch (Exception e) {
             System.err.println(e.getMessage());
         }
+        
+    
     
 }
 

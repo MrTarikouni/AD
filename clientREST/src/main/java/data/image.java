@@ -30,7 +30,7 @@ public class image {
         hm.put("author","");
         hm.put("creator","");
         hm.put("capture_date","");
-        //hm.put("storage_date",null);
+        hm.put("storage_date","");
         hm.put("filename","");
     }
     

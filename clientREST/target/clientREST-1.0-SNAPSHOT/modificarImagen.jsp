@@ -51,6 +51,10 @@
             String result = (br.readLine());  
             conn.disconnect();
             
+            if (result.length() < 3) response.sendRedirect("error.jsp?error=5");
+               
+            else {
+            
             Gson gson = new Gson();
             image i = gson.fromJson(result, image.class);
             
@@ -107,5 +111,5 @@
   </div>
 </form>
     </body>
-    <%} %>
+    <%}} %>
 

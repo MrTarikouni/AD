@@ -44,6 +44,7 @@
                 }
                 int id = Integer.valueOf(request.getParameter("id"));
                 
+                
                 URL url = new URL("http://localhost:8080/ServicioREST/resources/javaee8/getImageFromID/"+id);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
@@ -53,9 +54,13 @@
                 /* Recoger el resultado */
                 InputStreamReader in = new InputStreamReader(conn.getInputStream());
                 BufferedReader br = new BufferedReader(in);
-                String result = String.valueOf(br.readLine()); 
+                String result = (br.readLine()); 
                 conn.disconnect();
+                
+                
+                if (result.length() < 3) response.sendRedirect("error.jsp?error=3");
 
+                else {
                 Gson gson = new Gson();
                 image i = gson.fromJson(result, image.class);
                 
@@ -90,6 +95,7 @@
                     catch (Exception e) {
                         System.err.println(e.getMessage());
                     }
+                }
                 }
 
 

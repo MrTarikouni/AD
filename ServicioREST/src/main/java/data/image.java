@@ -25,14 +25,14 @@ public class image {
     private Map<String, String> hm = new HashMap<>();
     
     public image(){
-        hm.put("title",null);
-        hm.put("description",null);
-        hm.put("keywords",null);
-        hm.put("author",null);
-        hm.put("creator",null);
-        hm.put("capture_date",null);
-        //hm.put("storage_date",null);
-        hm.put("filename",null);
+        hm.put("title","");
+        hm.put("description","");
+        hm.put("keywords","");
+        hm.put("author","");
+        hm.put("creator","");
+        hm.put("capture_date","");
+        hm.put("storage_date","");
+        hm.put("filename","");
     }
     
     public Map getAttributes(){

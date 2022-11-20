@@ -61,6 +61,9 @@ public class eliminarImagen extends HttpServlet {
         InputStreamReader in = new InputStreamReader(conn.getInputStream());
         BufferedReader br = new BufferedReader(in);
         String result = String.valueOf(br.readLine()); 
+        
+        
+        
 
         Gson gson = new Gson();
         image i = gson.fromJson(result, image.class);
