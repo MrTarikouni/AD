@@ -55,7 +55,7 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
     
     
     if (request.getParameter("title").length() != 0 && request.getParameter("author").length() != 0){
-        URL url = new URL("http://localhost:8080/ServicioREST/resources/javaee8/multipleSearch/"+request.getParameter("title")+"/" + request.getParameter("author"));
+        URL url = new URL("http://localhost:8080/ServicioREST/resources/javaee8/searchMultiple/"+request.getParameter("title")+"/" + request.getParameter("author"));
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");

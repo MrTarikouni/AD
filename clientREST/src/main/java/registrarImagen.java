@@ -47,7 +47,7 @@ protected void processRequest(HttpServletRequest request,
     response.setContentType("text/html;charset=UTF-8");
 
     // Create path components to save the file
-    final String path = "/home/alumne/Descargas/Practica3/clientREST/src/main/webapp/files/";
+    final String path = "/home/alumne/Escritorio/Practica3/clientREST/src/main/webapp/files/";
     final Part filePart = request.getPart("file");
     final String fileName = getFileName(filePart);
     HttpSession session = request.getSession(false);
