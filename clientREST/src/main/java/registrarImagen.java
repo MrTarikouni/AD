@@ -25,6 +25,13 @@ import java.util.Calendar;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import javax.servlet.http.Part;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+
 
 
 /**
