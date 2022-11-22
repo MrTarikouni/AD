@@ -12,9 +12,17 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import Database.*;
 import data.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 /**
  *
@@ -86,28 +94,34 @@ public class JavaEE8Resource {
          }
      }
      
-     /**
-     * POST method to register a new image 
-     * @param title
-     * @param description
-     * @param keywords
-     * @param author
-     * @param creator
-     * @param capt_date
-     * @param filename
-     * @return
-     */
-    @Path("register")
+     /** 
+    * POST method to register a new image 
+    * @param title 
+    * @param description 
+    * @param keywords      
+    * @param author 
+    * @param creator 
+    * @param capt_date     
+    * @param filename     
+    * @param fileInputStream     
+    * @param fileMetaData     
+    * @return 
+    */ 
+    @Path("register") 
     @POST
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response registerImage(@FormParam("title") String title, 
-            @FormParam("description") String description, 
-            @FormParam("keywords") String keywords, 
-            @FormParam("author") String author, 
-            @FormParam("creator") String creator, 
-            @FormParam("capture") String capt_date,
-            @FormParam("filename") String filename) {
+    @Consumes(MediaType.MULTIPART_FORM_DATA) 
+    @Produces(MediaType.APPLICATION_JSON) 
+    public Response registerImage (@FormDataParam("title") String title, 
+            @FormDataParam("description") String description, 
+            @FormDataParam("keywords") String keywords, 
+            @FormDataParam("author") String author, 
+            @FormDataParam("creator") String creator, 
+            @FormDataParam("capture") String capt_date,
+            @FormDataParam("filename") String filename,
+            @FormDataParam("file") InputStream fileInputStream,
+            @FormDataParam("file") FormDataContentDisposition fileMetaData) {
+        
+        final String path = "/home/alumne/Escritorio/AD/ServicioREST/src/main/webapp/files/";
     
         image i = new image();
         i.setTitle(title);
@@ -116,7 +130,6 @@ public class JavaEE8Resource {
         i.setKeywords(keywords);
         i.setCreator(creator);
         i.setCapture_date(capt_date);
-        i.setFilename(filename);
         
         DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         LocalDate date = LocalDate.now();
@@ -135,16 +148,36 @@ public class JavaEE8Resource {
             extension = filename.substring(lastIndex);
         }
    
-        i.setFilename(fileNamewithoutextension + Integer.toString(id) + extension);   
+        filename = fileNamewithoutextension + Integer.toString(id) + extension;
+        i.setFilename(filename);   
         
          if (Imagequery.register(i)) {
-             return Response.ok(1, MediaType.APPLICATION_JSON).build();
+             
+             try {
+                OutputStream out = null;
+                out = new FileOutputStream(new File(path + File.separator
+                        + filename));
+
+                int read = 0;
+                final byte[] bytes = new byte[1024];
+
+                while ((read = fileInputStream.read(bytes)) != -1) {
+                    out.write(bytes, 0, read);
+
+                }
+                
+                out.close();
+                return Response.ok(1, MediaType.APPLICATION_JSON).build();
+                
+             } catch(IOException e) {
+                return Response.ok(-1, MediaType.APPLICATION_JSON).build();
+                
+             }
          }
          
          else {
              return Response.ok(-1, MediaType.APPLICATION_JSON).build();
          }
-         
     }
     
     /**
