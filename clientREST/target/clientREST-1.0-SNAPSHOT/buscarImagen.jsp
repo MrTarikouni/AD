@@ -23,10 +23,7 @@
         <h3 class = "fw-bold" style = "margin:25px 50px 25px 75px; ">Busque imágenes utilizando distintos criterios de búsqueda. Rellene los campos por los que quiere filtrar. Si no introduce ningún dato se mostraran todas las imágenes registradas en la plataforma.</h3>
         <form class="row g-2" style = "margin:25px 50px 25px 75px; max-width: 800px;" action="buscarImagen" method="POST">
 
-  <div class="col-md-6">
-    <label for="tit" class="form-label">Id</label>
-    <input type="text" class="form-control"  name="id" id="id">
-  </div>                                
+                               
   <div class="col-md-6">
     <label for="tit" class="form-label">Título</label>
     <input type="text" class="form-control"  name="title" id="tit">

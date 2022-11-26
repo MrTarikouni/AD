@@ -21,6 +21,8 @@ import java.io.PrintWriter;
 import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import javax.activation.MimetypesFileTypeMap;
+import javax.ws.rs.core.HttpHeaders;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
@@ -121,7 +123,7 @@ public class JavaEE8Resource {
             @FormDataParam("file") InputStream fileInputStream,
             @FormDataParam("file") FormDataContentDisposition fileMetaData) {
         
-        final String path = "/home/alumne/Escritorio/AD/ServicioREST/src/main/webapp/files/";
+        final String path = "/home/alumne/Escritorio/Practica3/ServicioREST/src/main/webapp/files/";
     
         image i = new image();
         i.setTitle(title);
@@ -299,7 +301,7 @@ public Response listImages () {
         i.setCreator(rs.getString("creator"));
         i.setCapture_date(rs.getString("capture_date"));
         i.setStorage_date(rs.getString("storage_date"));
-        i.setFilename("filename");
+        i.setFilename(rs.getString("filename"));
         cjt.setImage(i.getId(), i);
     }
     }catch(Exception e){
@@ -336,7 +338,7 @@ public Response searchByID (@PathParam("id") int id) {
         i.setCreator(rs.getString("creator"));
         i.setCapture_date(rs.getString("capture_date"));
         i.setStorage_date(rs.getString("storage_date"));
-        i.setFilename("filename");
+        i.setFilename(rs.getString("filename"));
         cjt.setImage(i.getId(), i);
     }
     }catch(Exception e){
@@ -375,7 +377,7 @@ public Response searchByTitle (@PathParam("title") String title) {
         i.setCreator(rs.getString("creator"));
         i.setCapture_date(rs.getString("capture_date"));
         i.setStorage_date(rs.getString("storage_date"));
-        i.setFilename("filename");
+        i.setFilename(rs.getString("filename"));
         cjt.setImage(i.getId(), i);
     }
     }catch(Exception e){
@@ -415,7 +417,7 @@ public Response searchByCreationDate (@PathParam("date") String date) {
         i.setCreator(rs.getString("creator"));
         i.setCapture_date(rs.getString("capture_date"));
         i.setStorage_date(rs.getString("storage_date"));
-        i.setFilename("filename");
+        i.setFilename(rs.getString("filename"));
         cjt.setImage(i.getId(), i);
     }
     }catch(Exception e){
@@ -454,7 +456,7 @@ public Response searchByAuthor (@PathParam("author") String author) {
         i.setCreator(rs.getString("creator"));
         i.setCapture_date(rs.getString("capture_date"));
         i.setStorage_date(rs.getString("storage_date"));
-        i.setFilename("filename");
+        i.setFilename(rs.getString("filename"));
         cjt.setImage(i.getId(), i);
     }
     }catch(Exception e){
@@ -493,7 +495,7 @@ public Response searchByKeywords (@PathParam("keywords") String keywords) {
         i.setCreator(rs.getString("creator"));
         i.setCapture_date(rs.getString("capture_date"));
         i.setStorage_date(rs.getString("storage_date"));
-        i.setFilename("filename");
+        i.setFilename(rs.getString("filename"));
         cjt.setImage(i.getId(), i);
     }
     }catch(Exception e){
@@ -528,7 +530,7 @@ public Response multipleSearch (@PathParam("title") String title,
         i.setCreator(rs.getString("creator"));
         i.setCapture_date(rs.getString("capture_date"));
         i.setStorage_date(rs.getString("storage_date"));
-        i.setFilename("filename");
+        i.setFilename(rs.getString("filename"));
         cjt.setImage(i.getId(), i);
     }
     }catch(Exception e){
@@ -540,5 +542,22 @@ public Response multipleSearch (@PathParam("title") String title,
     return Response.ok(200, MediaType.APPLICATION_JSON).entity(json).build();
     
 }
+
+@Path("getImage/{id}")
+    @GET
+    @Produces("image/*")
+    public Response getImage(@PathParam("id") int id) {
+        try {
+            final String path = "/home/alumne/Escritorio/Practica3/ServicioREST/src/main/webapp/files/";
+            image i = Imagequery.getImagefromID(id);
+            String filename = i.getFilename();
+            File f = new File(path+filename);
+            if (!f.exists()) return Response.ok("Error lo que sea").build();            
+            String mt = new MimetypesFileTypeMap().getContentType(f);                         
+            return Response.ok(f, mt).header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+filename).build();
+        } catch (Exception e) {
+            return Response.ok( "Error lo que sea"  ).build();
+        }
+    }
 
 }

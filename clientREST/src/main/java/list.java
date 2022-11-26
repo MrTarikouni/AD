@@ -89,9 +89,10 @@ public class list extends HttpServlet {
             for (Map.Entry<Integer,image> set : cjt.getImages().entrySet()){
                 image i = set.getValue();
                 ++counter;
-                dir = "files/"+i.getFilename();
-                
+                //dir = "files/"+i.getFilename();
                 int id = i.getId();
+                dir = "http://localhost:8080/ServicioREST/resources/javaee8/getImage/" + id;
+                
                 
                 out.println("<div style = \"text-align: center;\">");
                 out.println("<img src="+ dir +" width= \"400px\" height= \"auto\" style = \"border: 5px solid;\"  /><br>");
@@ -105,7 +106,7 @@ public class list extends HttpServlet {
                 out.println("<br><strong>Nombre del fichero</strong> = " + i.getFilename());
                 
                 
-                out.println("<br><a href="+dir+">Visualiza la imagen en otra pestaña </a><br> ");
+                out.println("<br><a href="+dir+">Descargar imagen</a><br> ");
                 
                 
                 if (u.getUsername() == null ? i.getCreator() == null : u.getUsername().equals(i.getCreator())){

@@ -73,14 +73,13 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
     }
     
     
-    else if (request.getParameter("id").length() != 0) {
+    /*else if (request.getParameter("id").length() != 0) {
         URL url = new URL("http://localhost:8080/ServicioREST/resources/javaee8/searchID/"+request.getParameter("id"));
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         conn.setDoOutput(true);               
 
-        /* Recoger el resultado */
         InputStreamReader in = new InputStreamReader(conn.getInputStream());
         BufferedReader br = new BufferedReader(in);
         String result = (br.readLine());  
@@ -89,7 +88,7 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
         cjt = gson.fromJson(result, CjtImages.class);
         
         conn.disconnect();        
-    }
+    }*/
     
     else if (request.getParameter("title").length() != 0) {
         URL url = new URL("http://localhost:8080/ServicioREST/resources/javaee8/searchTitle/"+request.getParameter("title"));
@@ -171,12 +170,13 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
             for (Map.Entry<Integer,image> set : cjt.getImages().entrySet()){
                 image i = set.getValue();
                 ++counter;
-                dir = "files/"+i.getFilename();
+                //dir = "files/"+i.getFilename();
                 
                 int id = i.getId();
+                dir = "http://localhost:8080/ServicioREST/resources/javaee8/getImage/" + id;
                 
                 out.println("<div style = \"text-align: center;\">");
-                //out.println("<img src="+ dir +" width= \"400px\" height= \"auto\" style = \"border: 5px solid;\"  /><br>");
+                out.println("<img src="+ dir +" width= \"400px\" height= \"auto\" style = \"border: 5px solid;\"  /><br>");
                 out.println("<br><strong>Titulo</strong> = " + i.getTitle());
                 out.println("<br><strong>Descripción</strong> = " + i.getDescription());
                 out.println("<br><strong>Palabras clave</strong> = " + i.getKeywords());
@@ -187,7 +187,7 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
                 out.println("<br><strong>Nombre del fichero</strong> = " + i.getFilename());
                 
                 
-                out.println("<br><a href="+dir+">Visualiza la imagen en otra pestaña </a><br> ");
+                out.println("<br><a href="+dir+">Descargar imagen </a><br> ");
                 
                 
                 if (u.getUsername() == null ? i.getCreator() == null : u.getUsername().equals(i.getCreator())){

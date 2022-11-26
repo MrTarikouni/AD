@@ -76,7 +76,8 @@
                 else if (i.getCreator().length() == 0 || i == null) response.sendRedirect("error.jsp?error=3");
                 else{
                     try {
-                        dir = "files/" + i.getFilename();
+                        //dir = "files/" + i.getFilename();
+                        dir = "http://localhost:8080/ServicioREST/resources/javaee8/getImage/" + id;
                         out.println("<div style = \"text-align: center;\">");
                         out.println("<br><h1 class = \"fw-bold\">Borrará la siguiente imagen:</h1>");
                         out.println("<img src="+ dir +" width= \"400px\" height= \"auto\" style = \"border: 5px solid;\"  /><br>");
