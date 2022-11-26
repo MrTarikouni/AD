@@ -141,6 +141,7 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
         cjt = gson.fromJson(result, CjtImages.class);
         
         conn.disconnect();
+        
     }
     else if (request.getParameter("cdate").length() != 0) {
         URL url = new URL("http://localhost:8080/ServicioREST/resources/javaee8/searchCreationDate/"+request.getParameter("cdate"));
