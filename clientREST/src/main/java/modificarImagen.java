@@ -27,6 +27,15 @@ import java.time.format.DateTimeFormatter;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.StreamDataBodyPart;
 
 /**
  *
@@ -67,12 +76,13 @@ public class modificarImagen extends HttpServlet {
         image i = gson.fromJson(result, image.class); //Imagen con sus metadatos antiguos
         
         if (i.getCreator() == null ? u.getUsername() != null : !i.getCreator().equals(u.getUsername())) response.sendRedirect("error.jsp?error=5");
-        
+        /*
         URL url = new URL("http://localhost:8080/ServicioREST/resources/javaee8/modify/");
         conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
         conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         conn.setDoOutput(true);
+        */
         
         if (request.getParameter("title").length() != 0) i.setTitle(request.getParameter("title"));
         if (request.getParameter("author").length() != 0) i.setAuthor(request.getParameter("author"));
@@ -85,28 +95,40 @@ public class modificarImagen extends HttpServlet {
             i.setCapture_date((date1.format(formatter1)));
             
         }
-        /*
-        Part filePart = request.getPart("file");
-        String fileName = getFileName(filePart);
-        if (fileName.length() != 0) {
-            int lastIndex = fileName.lastIndexOf('.');
-            String fileNamewithoutextension = fileName;
-            String extension = "";
-            if (lastIndex != -1){
-                fileNamewithoutextension = fileName.substring(0, lastIndex);
-                extension = fileName.substring(lastIndex);
-            }
+        
+        Part fileP = request.getPart("file");
+        String fileName = getFileName(fileP);
+        //Si se modifica el archivo
+        
+    final Client client = ClientBuilder.newBuilder().register(MultiPartFeature.class).build();
+    
+    StreamDataBodyPart filePart = new StreamDataBodyPart("file", fileP.getInputStream());
+    FormDataMultiPart formDataMultiPart = new FormDataMultiPart();
+    final FormDataMultiPart multipart = (FormDataMultiPart) formDataMultiPart
+            .field("id", i.getId(), MediaType.TEXT_PLAIN_TYPE)
+            .field("title", i.getTitle(), MediaType.TEXT_PLAIN_TYPE)
+            .field("description", i.getDescription(), MediaType.TEXT_PLAIN_TYPE)
+            .field("keywords", i.getKeywords(), MediaType.TEXT_PLAIN_TYPE)
+            .field("author", i.getAuthor(), MediaType.TEXT_PLAIN_TYPE)
+            .field("creator", i.getCreator(), MediaType.TEXT_PLAIN_TYPE)
+            .field("capture", i.getCapture_date(), MediaType.TEXT_PLAIN_TYPE)
+            .field("filename", fileName, MediaType.TEXT_PLAIN_TYPE)
+            .bodyPart(filePart);
 
-            i.setFilename(fileNamewithoutextension + Integer.toString(id) + extension);            
-        }
-        */
+    final WebTarget target = client.target("http://localhost:8080/ServicioREST/resources/javaee8/modify");
+    final Response resp = target.request().post(Entity.entity(multipart, multipart.getMediaType()));
 
-        /* Enviar los datos del formulario dentro de la petición */            
+    int result2 = Integer.parseInt(resp.readEntity(String.class));
+
+    formDataMultiPart.close();
+    multipart.close();
+
+
+        /*           
         String data2 = "id="+i.getId()+"&title="+i.getTitle()+"&description="+i.getDescription()+"&keywords="+i.getKeywords()+"&author="+i.getAuthor()+"&creator="+i.getCreator()+"&capture="+i.getCapture_date();
         OutputStream os2 = conn.getOutputStream();
         os2.write(data2.getBytes("utf-8"));
-
-        /* Recoger el resultado */
+        
         InputStreamReader in2 = new InputStreamReader(conn.getInputStream());
         BufferedReader br2 = new BufferedReader(in2);
         String result2 = String.valueOf(br2.readLine()); 
@@ -159,7 +181,7 @@ public class modificarImagen extends HttpServlet {
 
             }
             */
-           if (result2.equals("1")) {
+           if (result2 == 1) {
                         writer.println("   <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css\" rel=\"stylesheet\" integrity=\"sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi\" crossorigin=\"anonymous\">\n" +
              "");
                              writer.println(" <div style = margin: \"25px\";>");

@@ -123,7 +123,7 @@ public class JavaEE8Resource {
             @FormDataParam("file") InputStream fileInputStream,
             @FormDataParam("file") FormDataContentDisposition fileMetaData) {
         
-        final String path = "/home/alumne/Escritorio/Practica3/ServicioREST/src/main/webapp/files/";
+        final String path = "/home/alumne/Escritorio/AD/ServicioREST/src/main/webapp/files/";
     
         image i = new image();
         i.setTitle(title);
@@ -182,34 +182,40 @@ public class JavaEE8Resource {
          }
     }
     
-    /**
-     *POST method to modify an existing image
-     * @param id
-     * @param title
-     * @param description
-     * @param keywords
-     * @param author
-     * @param creator, used for checking image ownership 
-     * @param capt_date
-     * @return
-     */
-    @Path("modify")
+     /** 
+    * POST method to modify an existing image 
+    * @param id
+    * @param title 
+    * @param description 
+    * @param keywords      
+    * @param author 
+    * @param creator 
+    * @param capt_date     
+    * @param filename     
+    * @param fileInputStream     
+    * @param fileMetaData     
+    * @return 
+    */ 
+    @Path("modify") 
     @POST
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response modifyImage(@FormParam("id") String id, 
-            @FormParam("title") String title, 
-            @FormParam("description") String description, 
-            @FormParam("keywords") String keywords, 
-            @FormParam("author") String author, 
-            @FormParam("creator") String creator, 
-            @FormParam("capture") String capt_date) {
+    @Consumes(MediaType.MULTIPART_FORM_DATA) 
+    @Produces(MediaType.APPLICATION_JSON) 
+    public Response registerImage (@FormDataParam("id") int id,
+            @FormDataParam("title") String title, 
+            @FormDataParam("description") String description, 
+            @FormDataParam("keywords") String keywords, 
+            @FormDataParam("author") String author, 
+            @FormDataParam("creator") String creator, 
+            @FormDataParam("capture") String capt_date,
+            @FormDataParam("filename") String filename,
+            @FormDataParam("file") InputStream fileInputStream,
+            @FormDataParam("file") FormDataContentDisposition fileMetaData) {
         
-        int x = Integer.valueOf(id);
-        image i = Imagequery.getImagefromID(x);
+        image i = Imagequery.getImagefromID(id);
         
         DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
+        i.setId(id);
         i.setTitle(title);
         i.setDescription(description);
         i.setKeywords(keywords);
@@ -221,7 +227,50 @@ public class JavaEE8Resource {
         String storage_date = (date.format(formatter1));
         i.setStorage_date(storage_date);
         
+        final String path = "/home/alumne/Escritorio/AD/ServicioREST/src/main/webapp/files/";
+        boolean mod = false;
+        
+        if (filename.length() != 0) { //Se ha modificado el archivo de la imagen
+            int lastIndex = filename.lastIndexOf('.');
+            String fileNamewithoutextension = filename;
+            String extension = "";
+            if (lastIndex != -1){
+                fileNamewithoutextension = filename.substring(0, lastIndex);
+                extension = filename.substring(lastIndex);
+            }
+
+            File file1 = new File(path+i.getFilename()); //fichero antiguo
+            file1.delete();
+            filename = fileNamewithoutextension + Integer.toString(id) + extension;
+            i.setFilename(filename);
+            mod = true;
+        }
+        
         if (Imagequery.modify(i)) {
+            if (mod) {
+                
+                try {
+                   OutputStream out = null;
+                   out = new FileOutputStream(new File(path + File.separator
+                           + filename));
+
+                   int read = 0;
+                   final byte[] bytes = new byte[1024];
+
+                   while ((read = fileInputStream.read(bytes)) != -1) {
+                       out.write(bytes, 0, read);
+
+                   }
+
+                   out.close();
+                   return Response.ok(1, MediaType.APPLICATION_JSON).build();
+
+                } catch(IOException e) {
+                   return Response.ok(-1, MediaType.APPLICATION_JSON).build();
+
+                }
+                
+            }
             return Response.ok(1, MediaType.APPLICATION_JSON).build();
         }
         else {
@@ -243,8 +292,18 @@ public Response deleteImage (@FormParam("id") String id,
             @FormParam("creator") String creator) { 
     
     image i = Imagequery.getImagefromID(Integer.valueOf(id));
+    
     if (Imagequery.delete(i)) {
-        return Response.ok(1, MediaType.APPLICATION_JSON).build();
+        
+        final String path = "/home/alumne/Escritorio/AD/ServicioREST/src/main/webapp/files/";
+        File f = new File(path + File.separator + i.getFilename());
+            
+        if (f.delete()) {
+            return Response.ok(1, MediaType.APPLICATION_JSON).build();
+        }
+        else {
+            return Response.ok(-1, MediaType.APPLICATION_JSON).build();
+        }
     }
     else {
         return Response.ok(-1, MediaType.APPLICATION_JSON).build();
@@ -548,15 +607,15 @@ public Response multipleSearch (@PathParam("title") String title,
     @Produces("image/*")
     public Response getImage(@PathParam("id") int id) {
         try {
-            final String path = "/home/alumne/Escritorio/Practica3/ServicioREST/src/main/webapp/files/";
+            final String path = "/home/alumne/Escritorio/AD/ServicioREST/src/main/webapp/files/";
             image i = Imagequery.getImagefromID(id);
             String filename = i.getFilename();
             File f = new File(path+filename);
-            if (!f.exists()) return Response.ok("Error lo que sea").build();            
+            if (!f.exists()) return Response.ok("Fichero no existe").build();            
             String mt = new MimetypesFileTypeMap().getContentType(f);                         
             return Response.ok(f, mt).header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+filename).build();
         } catch (Exception e) {
-            return Response.ok( "Error lo que sea"  ).build();
+            return Response.ok("XD").build();
         }
     }
 
