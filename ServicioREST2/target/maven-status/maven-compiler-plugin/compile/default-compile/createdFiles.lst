@@ -1,0 +1,12 @@
+com/mycompany/restad/resources/JavaEE8Resource.class
+database/DatabaseModel.class
+database/models/Image.class
+database/DBConfig.class
+database/models/User$Meta.class
+database/ModelException.class
+database/models/User.class
+utils/ApiError.class
+com/mycompany/restad/JAXRSConfiguration.class
+database/TableColumn.class
+com/mycompany/restad/resources/ServicioRest.class
+database/models/Image$Meta.class
